@@ -145,7 +145,7 @@ PageBase {
             text: qsTr("Help")
             icon: "help"
             type: TextButton.Tonal
-            onClicked: Qt.openUrlExternally("https://github.com/ladybug-me/caelestia-kde/blob/main/docs/TROUBLESHOOTING.md#10-update-issues")
+            onClicked: Qt.openUrlExternally("https://github.com/FaaizAlii/caelestia-kde/blob/main/docs/TROUBLESHOOTING.md#10-update-issues")
         }
     ]
 
@@ -334,9 +334,7 @@ PageBase {
             first: true
             enabled: !root.branchDataLoading
             label: qsTr("Update channel")
-            subtext: UpdateChecker.currentBranch === "main"
-                ? qsTr("Stable releases")
-                : qsTr("Development builds - may be unstable")
+            subtext: qsTr("Personal fork — main branch")
             menuItems: root.branchItems
             active: root.activeBranchItem
             fallbackText: UpdateChecker.currentBranch
@@ -478,7 +476,7 @@ PageBase {
             command: ["sh", "-c",
                 'dir="$1"; shift; mkdir -p "$dir" && exec "$@" "$dir"',
                 "--",
-                Paths.absolutePath("~/.config/caelestia-update/backups")
+                Paths.absolutePath("~/.config/caelestia-faaiz-update/backups")
             ].concat(GlobalConfig.general.apps.explorer)
         }
     }

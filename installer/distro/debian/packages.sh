@@ -67,6 +67,7 @@ CORE_PACKAGES=(
 
     libaubio-dev aubio-tools lm-sensors libsensors-dev libpipewire-0.3-dev pipewire libfftw3-dev
 
+    libicu-dev
     qt6-base-dev qt6-base-private-dev qt6-declarative-dev qml6-module-qtquick qt6-wayland qt6-wayland-dev
     qt6-svg-dev qt6-shadertools-dev qt6-multimedia-dev qt6-5compat-dev qt6-image-formats-plugins
 

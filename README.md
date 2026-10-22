@@ -25,7 +25,7 @@ https://github.com/user-attachments/assets/38b24e7f-fdd9-43db-872b-8c0ac23a44fd
 **Requirements:** Arch-based, Fedora, or Debian/Ubuntu - KDE Plasma 6 on Wayland, Qt 6.9+
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ladybug-me/caelestia-kde/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/FaaizAlii/caelestia-kde/main/install.sh | sh
 ```
 
 ### Updating
@@ -136,3 +136,9 @@ assets/        the logo and screenshots used by the docs
 ## License
 
 GPL-3.0-or-later - see [LICENSE](LICENSE).
+
+## Personal fork
+
+This fork includes browser lyrics reliability fixes, offline Hindi/Gurmukhi romanization (Urdu stays unchanged), Nastaliq font setup, larger Urdu clock dates, SDDM avatar and Plasma session fixes, and responsive three finger Overview gestures. The installer builds the shell from source so these C++ fixes are included. Install without sudo using the command above, or run `bash install.sh` inside this fork's checkout. The bootstrap uses `~/caelestia-kde-faaiz` by default to keep an existing upstream checkout separate.
+
+Updates from Nexus or `caelestia update main` stay on this fork's `main` branch. Personal language defaults are applied on first installation; later updates preserve language settings. Gesture setup enables the included short swipe script. Jameel Noori Nastaleeq is downloaded separately from its versioned font package, with Noto Nastaliq Urdu as a fallback. No font binary is bundled here.

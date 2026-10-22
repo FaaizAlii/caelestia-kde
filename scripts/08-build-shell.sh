@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+# This fork ships C++ changes unavailable in upstream release binaries.
+export CAELESTIA_FORCE_BUILD_SHELL=1
+
 source "$(dirname "${BASH_SOURCE[0]}")/lib/install-kind.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/lib/log.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/lib/privileges.sh"
@@ -680,5 +683,7 @@ elif [[ "${APPLY_LOCKSCREEN:-true}" == "false" ]]; then
 else
     info "KDE Lock Screen installation and configuration skipped."
 fi
+
+bash "$BUNDLE_DIR/scripts/fork-defaults.sh"
 
 ok "Caelestia Shell and KDE Bridges built and installed successfully to user directory."

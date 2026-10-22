@@ -138,7 +138,7 @@ if(CAELESTIA_BUILD_LYRICS_TESTS)
 endif()
 
 # Optional: playback and original-script lyrics remain available without ICU.
-find_package(ICU QUIET COMPONENTS uc i18n)
+find_package(ICU REQUIRED COMPONENTS uc i18n)
 if(ICU_FOUND)
     target_compile_definitions(caelestia-services PRIVATE CAELESTIA_HAVE_ICU)
     target_link_libraries(caelestia-services PRIVATE ICU::uc ICU::i18n)

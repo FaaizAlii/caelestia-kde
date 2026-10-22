@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Id": "three-finger-overview-sensitive",
+        "Name": "Three Finger Overview (Short Swipe)",
+        "Description": "Swipe up with three fingers to open Overview, and down to close it.",
+        "Version": "3.1",
+        "License": "MIT"
+    },
+    "KPackageStructure": "KWin/Script",
+    "X-Plasma-API": "declarativescript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}

@@ -975,7 +975,7 @@ You can simply run `bash update.sh` in the cloned repo folder (~/caelestia-kde) 
 
 Run the following command to simply install the latest shell using installer.
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ladybug-me/caelestia-kde/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/FaaizAlii/caelestia-kde/main/install.sh | sh
 ```
 
 - If it gives an error due to already present `~/caelestia-kde` directory in your pc, then remove that directory first and then run the above command. **Make sure to copy the `backups/` folder somewhere and then put it back here after installation completes.**

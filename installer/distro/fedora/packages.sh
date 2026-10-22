@@ -45,6 +45,7 @@ CORE_PACKAGES=(
     aubio aubio-devel lm_sensors lm_sensors-devel pipewire-devel
     pulseaudio-qt-qt6-devel pulseaudio-libs-devel fftw-devel
 
+    libicu-devel
     qt6-qtbase qt6-qtbase-private-devel qt6-qtdeclarative qt6-qtdeclarative-devel
     qt6-qtwayland qt6-qtwayland-devel qt6-qtsvg qt6-qtsvg-devel qt6-qtshadertools-devel
     qt6-qtmultimedia-devel qt6-qt5compat-devel qt6-qtimageformats

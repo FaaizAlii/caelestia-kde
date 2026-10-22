@@ -40,6 +40,7 @@ CORE_PACKAGES=(
 
     aubio lm_sensors libpipewire pulseaudio-qt libpulse fftw
 
+    icu
     qt6-base qt6-declarative qt6-wayland qt6-shadertools qt6-svg
     qt6-multimedia qt6-5compat qt6-imageformats
 

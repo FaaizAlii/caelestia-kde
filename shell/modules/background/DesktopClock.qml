@@ -146,7 +146,7 @@ Item {
 
                     sourceComponent: StyledText {
                         text: Time.amPmStr
-                        font: Tokens.font.clock.size(Tokens.font.title.medium.pointSize * root.wideScale).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                        font: Tokens.font.clock.size(Tokens.font.title.medium.pointSize * root.wideScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Normal).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                         color: root.safeSecondary
                     }
                 }
@@ -167,19 +167,19 @@ Item {
 
                 StyledText {
                     text: Time.format("MMMM").toUpperCase()
-                    font: Tokens.font.clock.size(Tokens.font.title.medium.pointSize * root.wideScale).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 4).weight(ScriptFonts.isArabic(text) ? Font.Normal : Font.Bold).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                    font: Tokens.font.clock.size(Tokens.font.title.medium.pointSize * root.wideScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 4).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Bold).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                     color: root.safeSecondary
                 }
 
                 StyledText {
                     text: Time.format("dd")
-                    font: Tokens.font.clock.size(Tokens.font.headline.medium.pointSize * root.wideScale).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 2).weight(ScriptFonts.isArabic(text) ? Font.Normal : Font.Medium).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                    font: Tokens.font.clock.size(Tokens.font.headline.medium.pointSize * root.wideScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 2).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Medium).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                     color: root.safePrimary
                 }
 
                 StyledText {
                     text: Time.format("dddd")
-                    font: Tokens.font.clock.size(Tokens.font.body.large.pointSize * root.wideScale).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 2).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                    font: Tokens.font.clock.size(Tokens.font.body.large.pointSize * root.wideScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 2).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Normal).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                     color: root.safeSecondary
                     opacity: 0.9
                 }
@@ -241,7 +241,7 @@ Item {
 
                     sourceComponent: StyledText {
                         text: Time.amPmStr
-                        font: Tokens.font.clock.size(Tokens.font.body.medium.pointSize * root.compactScale).weight(ScriptFonts.isArabic(text) ? Font.Normal : Font.Medium).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                        font: Tokens.font.clock.size(Tokens.font.body.medium.pointSize * root.compactScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Medium).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                         color: root.safeSecondary
                         opacity: 0.85
                     }
@@ -262,7 +262,7 @@ Item {
 
                     anchors.centerIn: parent
                     text: Time.format("dddd, MMMM d")
-                    font: Tokens.font.clock.size(Tokens.font.body.medium.pointSize * root.compactScale).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 1).weight(ScriptFonts.isArabic(text) ? Font.Normal : Font.Medium).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                    font: Tokens.font.clock.size(Tokens.font.body.medium.pointSize * root.compactScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 1).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Medium).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                     color: root.safeSecondary
                 }
             }
@@ -316,7 +316,7 @@ Item {
 
                     sourceComponent: StyledText {
                         text: Time.amPmStr
-                        font: Tokens.font.clock.size(Tokens.font.label.medium.pointSize * root.stackedScale).weight(ScriptFonts.isArabic(text) ? Font.Normal : Font.Bold).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                        font: Tokens.font.clock.size(Tokens.font.label.medium.pointSize * root.stackedScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Bold).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                         color: root.safeSecondary
                         opacity: 0.8
                     }
@@ -338,7 +338,7 @@ Item {
 
                     anchors.centerIn: parent
                     text: Time.format("ddd, MMM d").toUpperCase()
-                    font: Tokens.font.clock.size(Tokens.font.label.large.pointSize * root.stackedScale).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 2).weight(ScriptFonts.isArabic(text) ? Font.Normal : Font.Bold).family(ScriptFonts.familyForText(text, root.sansFont)).build()
+                    font: Tokens.font.clock.size(Tokens.font.label.large.pointSize * root.stackedScale * (ScriptFonts.isArabic(text) ? 1.3 : 1)).letterSpacing(ScriptFonts.isArabic(text) ? 0 : 2).weight(ScriptFonts.isArabic(text) ? Font.DemiBold : Font.Bold).family(ScriptFonts.familyForText(text, root.sansFont)).build()
                     color: root.safePrimary
                 }
             }

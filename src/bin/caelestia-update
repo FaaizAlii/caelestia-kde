@@ -21,27 +21,11 @@ run_stage() {
 
 BRANCH="${1:-main}"
 TARGET_REF="${2:-}"
-if [ "$BRANCH" != "main" ] && [ "$BRANCH" != "dev" ]; then
-    echo "Warning: Branch '$BRANCH' is not allowed. Falling back to 'main'."
-    BRANCH="main"
+if [ "$BRANCH" != "main" ] || [ -n "$TARGET_REF" ]; then
+    die "This personal fork updates from main only. Run: caelestia update main"
 fi
-if ! git ls-remote --exit-code --heads https://github.com/ladybug-me/caelestia-kde.git "$BRANCH" >/dev/null 2>&1; then
-    echo "Warning: Branch '$BRANCH' does not exist on remote. Falling back to 'main'."
-    BRANCH="main"
-fi
-
-if [ -n "$TARGET_REF" ]; then
-    if git ls-remote --exit-code --tags https://github.com/ladybug-me/caelestia-kde.git "$TARGET_REF" >/dev/null 2>&1; then
-        TARGET_KIND="tag"
-    elif [ "$BRANCH" = "dev" ] && [[ "$TARGET_REF" =~ ^[0-9a-f]{7,40}$ ]]; then
-        # Dev can also install or revert to a specific commit, not just a tag.
-        TARGET_KIND="commit"
-    else
-        echo "Warning: Version tag '$TARGET_REF' not found on remote. Ignoring target and using branch head."
-        TARGET_REF=""
-    fi
-fi
-UPD_DIR="$HOME/.config/caelestia-update"
+git ls-remote --exit-code --heads https://github.com/FaaizAlii/caelestia-kde.git main >/dev/null 2>&1 || die "Cannot reach the fork's main branch."
+UPD_DIR="$HOME/.config/caelestia-faaiz-update"
 
 # Prevent concurrent update runs from racing on git/CMake/config writes.
 exec 9>"${XDG_RUNTIME_DIR:-/tmp}/caelestia-update.lock"
@@ -190,14 +174,14 @@ if [[ ! -d "$UPD_DIR/repo/.git" ]]; then
     mkdir -p "$UPD_DIR/repo"
     cd "$UPD_DIR/repo" || die "Failed to enter $UPD_DIR/repo"
     git init -q
-    git remote add origin https://github.com/ladybug-me/caelestia-kde.git
+    git remote add origin https://github.com/FaaizAlii/caelestia-kde.git
 else
     cd "$UPD_DIR/repo" || die "Failed to enter $UPD_DIR/repo"
     if git rev-parse HEAD >/dev/null 2>&1; then
         git reset --hard -q HEAD || die "Failed to reset repository state"
     fi
     git clean -fdx -q
-    git remote set-url origin https://github.com/ladybug-me/caelestia-kde.git
+    git remote set-url origin https://github.com/FaaizAlii/caelestia-kde.git
 fi
 
 # Always enforce sparse-checkout rules

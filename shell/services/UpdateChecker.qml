@@ -15,7 +15,7 @@ Singleton {
     property bool hasUpdate: false
     property string currentBranch: "main"
     property var commits: []
-    property var availableBranches: ["main", "dev"]
+    property var availableBranches: ["main"]
     property var availableVersions: []
     property int pendingCount: 0
     property bool versionSummaryMode: false
@@ -37,7 +37,7 @@ Singleton {
     property bool loadingMoreCommits: false
 
     function clampBranch(branch: string): string {
-        return (branch === "dev" || branch === "main") ? branch : "main";
+        return "main";
     }
 
     function checkUpdates(branch, persistBranch) {
@@ -58,10 +58,10 @@ Singleton {
     CURRENT_BRANCH="$1"
     LOCAL_COMMIT="$(cat \"$HOME/.config/quickshell/caelestia/.current_commit\" 2>/dev/null || true)"
 
-ALLOWED_BRANCHES="main dev"
+ALLOWED_BRANCHES="main"
 LIVE_ALLOWED_BRANCHES=""
 for b in $ALLOWED_BRANCHES; do
-    if git ls-remote --exit-code --heads https://github.com/ladybug-me/caelestia-kde.git "$b" >/dev/null 2>&1; then
+    if git ls-remote --exit-code --heads https://github.com/FaaizAlii/caelestia-kde.git "$b" >/dev/null 2>&1; then
         LIVE_ALLOWED_BRANCHES="$LIVE_ALLOWED_BRANCHES,$b"
     fi
 done
@@ -75,7 +75,7 @@ if ! echo ",$LIVE_ALLOWED_BRANCHES," | grep -q ",$CURRENT_BRANCH,"; then
     CURRENT_BRANCH="main"
 fi
 
-if ! echo ",main,dev," | grep -q ",$CURRENT_BRANCH,"; then
+if ! echo ",main," | grep -q ",$CURRENT_BRANCH,"; then
     CURRENT_BRANCH="main"
 fi
 
@@ -95,212 +95,13 @@ fi
 if [ "$2" = "1" ] && command -v update_state_set_branch >/dev/null 2>&1; then
     update_state_set_branch "$HOME/.config/quickshell/caelestia" "$CURRENT_BRANCH" || true
 fi
-REPO="$HOME/.cache/caelestia-update-repo"
+REPO="$HOME/.cache/caelestia-faaiz-update-repo"
 if [ ! -d "$REPO" ]; then
-    git clone --bare --filter=blob:none https://github.com/ladybug-me/caelestia-kde.git "$REPO" >/dev/null 2>&1
+    git clone --bare --filter=blob:none https://github.com/FaaizAlii/caelestia-kde.git "$REPO" >/dev/null 2>&1
 else
     git -C "$REPO" fetch --force origin "$CURRENT_BRANCH:$CURRENT_BRANCH" >/dev/null 2>&1
 fi
-
-normalize_version() {
-    printf '%s' "\${1#v}"
-}
-
-resolve_version() {
-    local ref="$1"
-    local ver
-    ver="$(git -C "$REPO" show "$ref:.github/version.env" 2>/dev/null | sed -nE 's/^VERSION[[:space:]]*=[[:space:]]*([A-Za-z0-9._-]+).*/\\1/p' | head -n 1)"
-    if [ -n "$ver" ]; then
-        printf '%s' "$ver"
-        return
-    fi
-    ver="$(git -C "$REPO" describe --tags --abbrev=0 "$ref" 2>/dev/null || true)"
-    if [ -z "$ver" ]; then
-        ver="$(git -C "$REPO" show "$ref:shell/CMakeLists.txt" 2>/dev/null | sed -nE 's/.*VERSION +"?([0-9]+\\.[0-9]+\\.[0-9]+).*/\\1/p' | head -n 1)"
-    fi
-    if [ -z "$ver" ]; then
-        ver="unknown"
-    fi
-    printf '%s' "$ver"
-}
-
-if [ "$CURRENT_BRANCH" = "main" ]; then
-    git -C "$REPO" fetch --tags origin >/dev/null 2>&1 || true
-
-    CURRENT_VERSION_FILE="$HOME/.config/quickshell/caelestia/.current_version"
-    FROM_VERSION=""
-    if [ -f "$CURRENT_VERSION_FILE" ]; then
-        FROM_VERSION="$(sed -nE 's/^VERSION[[:space:]]*=[[:space:]]*([A-Za-z0-9._-]+).*/\\1/p' "$CURRENT_VERSION_FILE" | head -n 1)"
-    fi
-    # Fall through instead of elif-chaining: an existing but empty/unparseable
-    # .current_version file (e.g. truncated by a failed git show) must not
-    # block the commit- and version.env-based fallbacks below.
-    if [ -z "$FROM_VERSION" ] && [ -n "$LOCAL_COMMIT" ]; then
-        FROM_VERSION="$(resolve_version "$LOCAL_COMMIT")"
-    fi
-    if [ -z "$FROM_VERSION" ] && [ -f "$HOME/.config/quickshell/caelestia/.github/version.env" ]; then
-        FROM_VERSION="$(sed -nE 's/^VERSION[[:space:]]*=[[:space:]]*([A-Za-z0-9._-]+).*/\\1/p' "$HOME/.config/quickshell/caelestia/.github/version.env" | head -n 1)"
-    fi
-    # The compiled version helper, which is what the caelestia command reports from as
-    # well. On a packaged install it is the only one of these that answers: there is no
-    # checkout for git to describe and no version.env beside the config, and without it the
-    # update row stays empty because an unknown version is never offered as updatable.
-    #
-    # This comment and the script below avoid naming template-literal syntax directly.
-    # Both of its forms are syntax to the QML template literal they live in:
-    # dollar-brace interpolation is evaluated as QML before bash is handed the script, and
-    # an unescaped backtick ends the literal, which stops the file parsing and takes every
-    # singleton that imports this service down with it.
-    VER_HELPER_DIR="$CAELESTIA_LIB_DIR"
-    if [ -z "$VER_HELPER_DIR" ]; then
-        VER_HELPER_DIR=/usr/lib/caelestia
-    fi
-    if [ -z "$FROM_VERSION" ] && [ -x "$VER_HELPER_DIR/version" ]; then
-        FROM_VERSION="$("$VER_HELPER_DIR/version" -s 2>/dev/null | awk '{ sub(/,/, "", $2); print $2 }')"
-    fi
-    [ -n "$FROM_VERSION" ] || FROM_VERSION="unknown"
-    FROM_VERSION="$(normalize_version "$FROM_VERSION")"
-
-    TAG_LINES="$(git -C "$REPO" for-each-ref --sort=-creatordate --format='%(refname:short)|%(creatordate:iso8601-strict)' 'refs/tags/v*' 2>/dev/null || true)"
-    LATEST_VERSION="$(printf '%s\n' "$TAG_LINES" | sed -n '1s/|.*//p')"
-    PREVIOUS_VERSION="$(printf '%s\n' "$TAG_LINES" | sed -n '2s/|.*//p')"
-    [ -n "$LATEST_VERSION" ] || LATEST_VERSION="$FROM_VERSION"
-    [ -n "$PREVIOUS_VERSION" ] || PREVIOUS_VERSION="$LATEST_VERSION"
-    LATEST_VERSION="$(normalize_version "$LATEST_VERSION")"
-    PREVIOUS_VERSION="$(normalize_version "$PREVIOUS_VERSION")"
-    echo "META|$FROM_VERSION|$LATEST_VERSION|$PREVIOUS_VERSION"
-
-    if [ "$FROM_VERSION" != "$LATEST_VERSION" ] && [ "$FROM_VERSION" != "unknown" ] && [ -n "$LATEST_VERSION" ]; then
-        # Announce an update only when the installed version is a known
-        # release strictly behind the newest tag. Unresolvable local commits
-        # resolve to "unknown", and version.env can be bumped ahead of the
-        # newest tag — neither may count as "update available", otherwise a
-        # user already at (or ahead of) the latest main is offered a downgrade.
-        DISTANCE="$(printf '%s\n' "$TAG_LINES" | cut -d'|' -f1 | nl -v0 | awk -v local="$FROM_VERSION" '
-            $2 == local { print $1; found=1; exit }
-            END { if (!found) print -1 }
-        ')"
-        if ! [[ "$DISTANCE" =~ ^[0-9]+$ ]] || [ "$DISTANCE" -lt 1 ]; then
-            DISTANCE=0
-        fi
-        if [ "$DISTANCE" -ge 1 ]; then
-            echo "VERSION|$FROM_VERSION|$LATEST_VERSION|$DISTANCE"
-        fi
-    fi
-
-    printf '%s\n' "$TAG_LINES" | while IFS='|' read -r tag created; do
-        [ -n "$tag" ] || continue
-        echo "RELEASE_TAG|$tag|$created"
-    done
-
-    PYTHON_BIN="$(command -v python3 || command -v python || true)"
-    [ -n "$PYTHON_BIN" ] || exit 0
-
-    FROM_VERSION="$FROM_VERSION" REPO="$REPO" "$PYTHON_BIN" - <<'PY'
-import json
-import os
-import re
-import subprocess
-import sys
-import urllib.request
-
-def parse_whats_changed(text: str) -> str:
-    txt = (text or "").replace("\\r", "")
-
-    m = re.search(r"^#{2,3}\\s*What's Changed\\s*$", txt, flags=re.IGNORECASE | re.MULTILINE)
-    if m:
-        rest = txt[m.end():]
-        next_header = re.search(r"^#{2,3}\\s+", rest, flags=re.MULTILINE)
-        if next_header:
-            txt = rest[:next_header.start()]
-        else:
-            txt = rest
-    else:
-        return ""
-
-    txt = txt.strip()
-    txt = re.sub(r"\\n{3,}", "\\n\\n", txt)
-    txt = re.sub(r"[ \\t]+\\n", "\\n", txt)
-    return txt[:1600]
-
-def run_git(*args: str) -> str:
-    repo = os.getenv("REPO") or ""
-    cmd = ["git", "-C", repo, *args]
-    return subprocess.check_output(cmd, text=True, stderr=subprocess.DEVNULL)
-
-def fetch_releases() -> list:
-    url = "https://api.github.com/repos/ladybug-me/caelestia-kde/releases?per_page=100"
-    req = urllib.request.Request(url, headers={"User-Agent": "caelestia-update-checker"})
-    try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return json.loads(resp.read().decode("utf-8") or "[]")
-    except Exception:
-        return []
-
-try:
-    raw_tags = run_git("for-each-ref", "--sort=-creatordate", "--format=%(refname:short)|%(creatordate:iso8601-strict)", "refs/tags/v*")
-except Exception:
-    raise SystemExit(0)
-
-tags = []
-for line in (raw_tags or "").splitlines():
-    if not line.strip() or "|" not in line:
-        continue
-    tag, created = line.split("|", 1)
-    tag = tag.strip()
-    if tag:
-        tags.append({"tag": tag, "created": created.strip()})
-
-if not tags:
-    raise SystemExit(0)
-
-release_map = {}
-for rel in fetch_releases():
-    if rel.get("draft") or rel.get("prerelease"):
-        continue
-    tag = (rel.get("tag_name") or "").strip()
-    if not tag:
-        continue
-    release_map[tag] = {
-        "published": (rel.get("published_at") or "").strip(),
-        "body": parse_whats_changed(rel.get("body") or "")
-    }
-
-from_version = (os.getenv("FROM_VERSION") or "unknown").strip()
-latest = tags[0]["tag"]
-previous = tags[1]["tag"] if len(tags) > 1 else latest
-
-# Strip a leading "v" so "v2.3.1" and "2.3.1" compare equal.
-def norm(v):
-    return (v or "").lstrip("vV")
-
-from_version = norm(from_version)
-latest = norm(latest)
-previous = norm(previous)
-
-print(f"META|{from_version}|{latest}|{previous}")
-
-# Mirror the bash logic above: only a known release strictly behind the
-# newest tag is an available update. "unknown" or a version bumped ahead
-# of the newest tag must not trigger the shell's update offer.
-tag_names = [norm(t["tag"]) for t in tags]
-if from_version != latest and from_version != "unknown" and from_version in tag_names:
-    distance = tag_names.index(from_version)
-    if distance > 0:
-        print(f"VERSION|{from_version}|{latest}|{distance}")
-
-for t in tags:
-    tag = t["tag"]
-    rel = release_map.get(tag, {})
-    out = {
-        "tag": tag,
-        "published": rel.get("published") or t.get("created") or "",
-        "body": rel.get("body") or ""
-    }
-    print("RELEASE_JSON|" + json.dumps(out, separators=(",", ":"), ensure_ascii=False))
-PY
-else
-    # Dev branch: paginated commit history — emit only the first page (10
+    # Personal main: paginated commit history — emit only the first page (10
     # commits by default) plus a MORE flag so the UI can offer to load the
     # next page instead of pulling the whole dev history up front.
     DEV_LOG_LIMIT=10
@@ -321,7 +122,6 @@ else
     [ -n "$AHEAD_COUNT" ] || AHEAD_COUNT=0
     echo "AHEAD|$AHEAD_COUNT"
     echo "LOCAL|$LOCAL_COMMIT"
-fi
 `
     gitProcess.command = ["bash", "-c", bashCmd, "update-check", currentBranch, persistBranch ? "1" : "0"];
         gitProcess.running = true;
@@ -333,11 +133,11 @@ fi
     }
 
     function loadMoreCommits(): void {
-        if (root.loadingMoreCommits || !root.hasMoreCommits || root.currentBranch !== "dev")
+        if (root.loadingMoreCommits || !root.hasMoreCommits)
             return;
         root.loadingMoreCommits = true;
         const moreCmd = `
-REPO="$HOME/.cache/caelestia-update-repo"
+REPO="$HOME/.cache/caelestia-faaiz-update-repo"
 BRANCH="$1"
 SKIP="$2"
 LIMIT="$3"
@@ -484,17 +284,17 @@ fi
                     const parsedVersions = [];
                     let parsedPendingCount = 0;
                     let parsedHasUpdate = false;
-                    let parsedVersionSummaryMode = root.currentBranch === "main";
+                    let parsedVersionSummaryMode = false;
                     let parsedLocalCommitFull = "";
                     let parsedCommitCount = 0;
                     let parsedHasMore = false;
-                    root.availableBranches = ["main", "dev"];
+                    root.availableBranches = ["main"];
 
                     for (let i = 0; i < lines.length; i++) {
                         const line = lines[i].trim();
                         if (line === "") continue;
                         if (line.startsWith("BRANCHES|")) {
-                            root.availableBranches = line.substring(9).split(",").filter(b => b === "main" || b === "dev");
+                            root.availableBranches = line.substring(9).split(",").filter(b => b === "main");
                             if (root.availableBranches.length === 0)
                                 root.availableBranches = ["main"];
                             if (!root.availableBranches.includes(root.currentBranch)) {

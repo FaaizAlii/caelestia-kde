@@ -77,7 +77,7 @@ seed_submodule() {
     git -C "$work" rev-parse HEAD
 }
 
-# Builds the local stand-in for the GitHub remote: this tree's own content on branch dev,
+# Builds the local stand-in for the GitHub remote: this tree's own content on branch main,
 # with both submodules pointed at local repositories so that the checkout needs no network.
 # Prints the path to fetch from.
 fixture_remote() {
@@ -101,7 +101,7 @@ fixture_remote() {
     git -C "$remote" update-index --add --cacheinfo 160000,"$dots",src/dots || return 1
     git -C "$remote" update-index --add --cacheinfo 160000,"$icons",src/yet-another-monochrome-icon-set || return 1
     git -C "$remote" commit -qm fixture || return 1
-    git -C "$remote" branch -M dev || return 1
+    git -C "$remote" branch -M main || return 1
 
     printf '%s\n' "$remote"
 }
@@ -145,7 +145,7 @@ run_updater() {
     name = fixture
     email = fixture@example.invalid
 [url "$FIXTURE_REMOTE"]
-    insteadOf = https://github.com/ladybug-me/caelestia-kde.git
+    insteadOf = https://github.com/FaaizAlii/caelestia-kde.git
 [protocol "file"]
     allow = always
 EOF
@@ -153,7 +153,7 @@ EOF
     env -i HOME="$home" PATH="$tools" TMPDIR="$TEST_ROOT/tmp" \
         XDG_RUNTIME_DIR="$home/.runtime" \
         CAELESTIA_SKIP_DEPLOY=1 CAELESTIA_SKIP_BUILD=1 \
-        "$BASH_BIN" "$UPDATER" dev > "$log" 2>&1
+        "$BASH_BIN" "$UPDATER" main > "$log" 2>&1
     printf '%s\n' "$?"
 }
 
@@ -163,7 +163,7 @@ sparse_rules() {
 }
 
 checkout_repo() {
-    printf '%s\n' "$1/.config/caelestia-update/repo"
+    printf '%s\n' "$1/.config/caelestia-faaiz-update/repo"
 }
 
 test_the_checkout_carries_everything_the_later_stages_read() {
