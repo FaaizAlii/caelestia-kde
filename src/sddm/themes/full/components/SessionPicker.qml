@@ -10,15 +10,19 @@ Item {
     property int selectedIndex: 0
     property string currentText
     Component.onCompleted: {
-        root.currentText = sessionArray.sessions[root.selectedIndex].name;
         const arr = [];
         for (let i = 0; i < sessionArray.sessions.length; i++) {
             arr.push(sessionArray.sessions[i].name);
         }
         root.items = arr;
+        // Prefer Plasma even when Niri is the first installed session.
+        const plasmaIndex = sessionArray.sessions.findIndex(session => /^Plasma(?:\s|$)/i.test(session.name));
+        if (plasmaIndex >= 0)
+            root.selectedIndex = sessionArray.sessions[plasmaIndex].index;
+        root.currentText = sessionArray.sessions[root.selectedIndex]?.name ?? "";
     }
     onSelectedIndexChanged: {
-        root.currentText = sessionArray.sessions[root.selectedIndex].name;
+        root.currentText = sessionArray.sessions[root.selectedIndex]?.name ?? "";
     }
 
     width: labelRect.width + expandBtn.width
