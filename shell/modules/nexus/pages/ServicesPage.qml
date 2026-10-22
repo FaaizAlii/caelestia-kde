@@ -142,6 +142,15 @@ PageBase {
             onSelected: item => Lyrics.preferredBackend = root.lyricsItems.indexOf(item)
         }
 
+        ToggleRow {
+            text: qsTr("Romanize Hindi & Punjabi lyrics")
+            subtext: qsTr("Use Latin letters for Devanagari and Gurmukhi; keep Urdu unchanged")
+            reset: ({ node: GlobalConfig.services, setting: "romanizeIndicLyrics" })
+            checked: GlobalConfig.services.romanizeIndicLyrics
+            enabled: Lyrics.romanizationAvailable
+            onToggled: GlobalConfig.services.romanizeIndicLyrics = checked
+        }
+
         SelectRow {
             last: true
             label: qsTr("Default player")

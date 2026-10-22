@@ -48,7 +48,7 @@ Item {
                 Layout.fillWidth: true
                 text: Time.format(root.width > 380 ? "dddd, MMMM d" : "ddd, MMM d")
                 color: Colours.palette.m3onSurfaceVariant
-                font: Tokens.font.body.medium
+                font: Tokens.font.body.builders.medium.family(ScriptFonts.familyForText(text, Tokens.font.body.medium.family)).build()
                 elide: Text.ElideRight
             }
         }

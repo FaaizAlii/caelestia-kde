@@ -286,7 +286,7 @@ Item {
 
             text: modelData || ". . ."
             color: ListView.isCurrentItem ? Colours.palette.m3primary : mouse.containsMouse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font: Tokens.font.body.medium
+            font: Tokens.font.body.builders.medium.family(ScriptFonts.familyForText(text, Tokens.font.body.medium.family)).build()
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
             layer.enabled: effectScale > 0
